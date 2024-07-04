@@ -37,14 +37,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-// Definimos un array de recursos de imágenes
 val images = arrayOf(
-    R.drawable.baked_goods_1, // Imagen generada con Gemini usando el prompt "cupcake image"
-    R.drawable.baked_goods_2, // Imagen generada con Gemini usando el prompt "cookies images"
-    R.drawable.baked_goods_3, // Imagen generada con Gemini usando el prompt "cake images"
+    // Image generated using Gemini from the prompt "cupcake image"
+    R.drawable.baked_goods_1,
+    // Image generated using Gemini from the prompt "cookies images"
+    R.drawable.baked_goods_2,
+    // Image generated using Gemini from the prompt "cake images"
+    R.drawable.baked_goods_3,
 )
-
-// Definimos un array de descripciones de imágenes
 val imageDescriptions = arrayOf(
     R.string.image1_description,
     R.string.image2_description,
@@ -53,49 +53,39 @@ val imageDescriptions = arrayOf(
 
 @Composable
 fun BakingScreen(
-    bakingViewModel: BakingViewModel = viewModel() // Obtenemos una instancia de BakingViewModel
+    bakingViewModel: BakingViewModel = viewModel()
 ) {
-    // Variable para almacenar la imagen seleccionada
     val selectedImage = remember { mutableIntStateOf(0) }
-    // Variables para almacenar los placeholders de los textos de prompt y resultado
     val placeholderPrompt = stringResource(R.string.prompt_placeholder)
     val placeholderResult = stringResource(R.string.results_placeholder)
     var prompt by rememberSaveable { mutableStateOf(placeholderPrompt) }
     var result by rememberSaveable { mutableStateOf(placeholderResult) }
-    // Obtenemos el estado de la UI desde el ViewModel
     val uiState by bakingViewModel.uiState.collectAsState()
-    // Obtenemos el contexto actual
     val context = LocalContext.current
 
-    // Comenzamos a construir la columna principal de la pantalla
     Column(
-        modifier = Modifier.fillMaxSize() // La columna ocupa todo el tamaño disponible
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Título de la pantalla
         Text(
             text = stringResource(R.string.baking_title),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(16.dp)
         )
 
-        // Fila de imágenes desplazables horizontalmente
         LazyRow(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Iteramos sobre las imágenes y sus índices
             itemsIndexed(images) { index, image ->
                 var imageModifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
                     .requiredSize(200.dp)
                     .clickable {
-                        selectedImage.intValue = index // Actualizamos la imagen seleccionada
+                        selectedImage.intValue = index
                     }
                 if (index == selectedImage.intValue) {
-                    // Si la imagen es la seleccionada, añadimos un borde
                     imageModifier =
                         imageModifier.border(BorderStroke(4.dp, MaterialTheme.colorScheme.primary))
                 }
-                // Mostramos la imagen
                 Image(
                     painter = painterResource(image),
                     contentDescription = stringResource(imageDescriptions[index]),
@@ -104,11 +94,9 @@ fun BakingScreen(
             }
         }
 
-        // Fila con el campo de texto y el botón
         Row(
             modifier = Modifier.padding(all = 16.dp)
         ) {
-            // Campo de texto para el prompt
             TextField(
                 value = prompt,
                 label = { Text(stringResource(R.string.label_prompt)) },
@@ -119,17 +107,15 @@ fun BakingScreen(
                     .align(Alignment.CenterVertically)
             )
 
-            // Botón para enviar el prompt
             Button(
                 onClick = {
                     val bitmap = BitmapFactory.decodeResource(
                         context.resources,
                         images[selectedImage.intValue]
                     )
-                    // Llamamos al ViewModel para enviar el prompt con la imagen seleccionada
                     bakingViewModel.sendPrompt(bitmap, prompt)
                 },
-                enabled = prompt.isNotEmpty(), // El botón solo está habilitado si el prompt no está vacío
+                enabled = prompt.isNotEmpty(),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
             ) {
@@ -137,22 +123,18 @@ fun BakingScreen(
             }
         }
 
-        // Si el estado de la UI es Loading, mostramos un indicador de carga
         if (uiState is UiState.Loading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
             var textColor = MaterialTheme.colorScheme.onSurface
-            // Si el estado de la UI es Error, mostramos el mensaje de error
             if (uiState is UiState.Error) {
                 textColor = MaterialTheme.colorScheme.error
                 result = (uiState as UiState.Error).errorMessage
             } else if (uiState is UiState.Success) {
-                // Si el estado de la UI es Success, mostramos el resultado
                 textColor = MaterialTheme.colorScheme.onSurface
                 result = (uiState as UiState.Success).outputText
             }
             val scrollState = rememberScrollState()
-            // Mostramos el texto del resultado
             Text(
                 text = result,
                 textAlign = TextAlign.Start,

@@ -1,27 +1,27 @@
 package dev.javierfuentes.geminitest
 
 /**
- * A sealed hierarchy describing the state of the text generation.
+ * Una jerarquía sellada que describe el estado de la generación de texto.
  */
 sealed interface UiState {
 
     /**
-     * Empty state when the screen is first shown
+     * Estado vacío cuando la pantalla se muestra por primera vez
      */
     object Initial : UiState
 
     /**
-     * Still loading
+     * Todavía cargando
      */
     object Loading : UiState
 
     /**
-     * Text has been generated
+     * El texto ha sido generado
      */
     data class Success(val outputText: String) : UiState
 
     /**
-     * There was an error generating text
+     * Hubo un error al generar el texto
      */
     data class Error(val errorMessage: String) : UiState
 }

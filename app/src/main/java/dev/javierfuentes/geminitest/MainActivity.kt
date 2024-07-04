@@ -9,16 +9,20 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import dev.javierfuentes.geminitest.ui.theme.GeminiTestTheme
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
+            // Aplicamos el tema personalizado de la aplicación
             GeminiTestTheme {
-                // A surface container using the 'background' color from the theme
+                // Contenedor de superficie usando el color de fondo del tema
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.fillMaxSize(), // La superficie ocupa todo el tamaño disponible
+                    color = MaterialTheme.colorScheme.background, // Usamos el color de fondo del tema
                 ) {
+                    // Llamamos a la función composable BakingScreen para mostrar su contenido
                     BakingScreen()
                 }
             }
